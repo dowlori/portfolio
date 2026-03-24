@@ -67,16 +67,24 @@
   }
   .nav-links a:hover { color: var(--accent); }
 
-  /* ── PORTFOLIO DROPDOWN ── */
+  /* ── PORTFOLIO DROPDOWN — click-toggled ── */
   .nav-dropdown { position: relative; }
-  .nav-dropdown > a { display: flex; align-items: center; gap: 0.4rem; }
-  .nav-dropdown > a::after {
+  .dropdown-trigger {
+    display: flex; align-items: center; gap: 0.4rem;
+    background: none; border: none; padding: 0;
+    font-size: 0.7rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.15em;
+    color: var(--muted); cursor: none; transition: color 0.2s;
+    font-family: 'Syne', sans-serif;
+  }
+  .dropdown-trigger:hover { color: var(--accent); }
+  .dropdown-trigger.open { color: var(--accent); }
+  .dropdown-trigger::after {
     content: ''; width: 5px; height: 5px;
     border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor;
     transform: rotate(45deg) translateY(-2px); transition: transform 0.2s; display: inline-block;
   }
-  .nav-dropdown:hover > a::after,
-  .nav-dropdown:focus-within > a::after { transform: rotate(-135deg) translateY(-2px); }
+  .dropdown-trigger.open::after { transform: rotate(-135deg) translateY(-2px); }
   .dropdown-menu {
     position: absolute; top: calc(100% + 1.2rem); left: 50%;
     background: var(--bg); border: 1px solid var(--surface2);
@@ -85,8 +93,7 @@
     transform: translateX(-50%) translateY(-6px);
     transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
   }
-  .nav-dropdown:hover .dropdown-menu,
-  .nav-dropdown:focus-within .dropdown-menu {
+  .dropdown-menu.open {
     opacity: 1; visibility: visible; pointer-events: all;
     transform: translateX(-50%) translateY(0);
   }
@@ -263,11 +270,11 @@
   <ul class="nav-links">
     <li><a href="#about">About</a></li>
     <li class="nav-dropdown">
-      <a href="#projects">Portfolio</a>
-      <div class="dropdown-menu">
-        <a href="/projects/learning-design/">Learning Design <span class="menu-arrow">↗</span></a>
-        <a href="/projects/case-studies/">Case Studies <span class="menu-arrow">↗</span></a>
-        <a href="/projects/graphic-design/">Graphic Design <span class="menu-arrow">↗</span></a>
+      <button class="dropdown-trigger" id="portfolio-trigger" aria-expanded="false" aria-controls="portfolio-menu" onclick="toggleDropdown()">Portfolio</button>
+      <div class="dropdown-menu" id="portfolio-menu" role="menu">
+        <a href="/learning-design/" role="menuitem">Learning Design <span class="menu-arrow">↗</span></a>
+        <a href="/case-studies/" role="menuitem">Case Studies <span class="menu-arrow">↗</span></a>
+        <a href="/graphic-design/" role="menuitem">Graphic Design <span class="menu-arrow">↗</span></a>
       </div>
     </li>
     <li><a href="#experience">Experience</a></li>
@@ -497,6 +504,34 @@
   document.querySelectorAll('a, button').forEach(function(el) {
     el.addEventListener('mouseenter', function() { cur.style.width='20px'; cur.style.height='20px'; });
     el.addEventListener('mouseleave', function() { cur.style.width='12px'; cur.style.height='12px'; });
+  });
+
+  /* DROPDOWN — click to open/close, click outside to dismiss */
+  function toggleDropdown() {
+    var trigger = document.getElementById('portfolio-trigger');
+    var menu    = document.getElementById('portfolio-menu');
+    var isOpen  = menu.classList.contains('open');
+    trigger.classList.toggle('open', !isOpen);
+    menu.classList.toggle('open', !isOpen);
+    trigger.setAttribute('aria-expanded', String(!isOpen));
+  }
+  document.addEventListener('click', function(e) {
+    var trigger = document.getElementById('portfolio-trigger');
+    var menu    = document.getElementById('portfolio-menu');
+    if (!trigger.contains(e.target) && !menu.contains(e.target)) {
+      trigger.classList.remove('open');
+      menu.classList.remove('open');
+      trigger.setAttribute('aria-expanded', 'false');
+    }
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      var trigger = document.getElementById('portfolio-trigger');
+      var menu    = document.getElementById('portfolio-menu');
+      trigger.classList.remove('open');
+      menu.classList.remove('open');
+      trigger.setAttribute('aria-expanded', 'false');
+    }
   });
 
   /* SPLINE — inject after page load so it doesn't block initial render */
