@@ -473,27 +473,38 @@
     <p class="contact-sub">Open to freelance projects, part-time roles, and consulting engagements. If you're building something that needs thoughtful learning design, LATAM Spanish instructional architecture, and strategic project management, let's talk.</p>
     <a href="mailto:lowreacher@outlook.com" class="contact-email">lowreacher@outlook.com ↗</a>
   </div>
-  <div class="contact-form fade-up">
+  <form class="contact-form fade-up"
+        name="contact"
+        method="POST"
+        data-netlify="true"
+        netlify-honeypot="bot-field"
+        action="/success">
+
+    <!-- Honeypot — hidden from humans, catches bots -->
+    <p style="display:none">
+      <label>Don't fill this out: <input name="bot-field" /></label>
+    </p>
+
     <div class="form-row">
       <div class="form-field">
-        <label>Name</label>
-        <input type="text" placeholder="Your Name" />
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" placeholder="Your Name" required />
       </div>
       <div class="form-field">
-        <label>Email</label>
-        <input type="email" placeholder="yourname@company.com" />
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="yourname@company.com" required />
       </div>
     </div>
     <div class="form-field">
-      <label>Subject</label>
-      <input type="text" placeholder="Project inquiry, collaboration..." />
+      <label for="subject">Subject</label>
+      <input type="text" id="subject" name="subject" placeholder="Project inquiry, collaboration..." required />
     </div>
     <div class="form-field">
-      <label>Message</label>
-      <textarea placeholder="Tell me about your project..."></textarea>
+      <label for="message">Message</label>
+      <textarea id="message" name="message" placeholder="Tell me about your project..." required></textarea>
     </div>
-    <button class="submit-btn">Send Message &#8594;</button>
-  </div>
+    <button type="submit" class="submit-btn">Send Message &#8594;</button>
+  </form>
 </section>
 
 <!-- FOOTER -->
@@ -501,6 +512,7 @@
   <p>&#169; 2026 Lori Dowling &#8212; Senior Instructional Designer</p>
   <div class="footer-links">
     <a href="https://www.linkedin.com/in/loridowling/">LinkedIn</a>
+    <a href="https://github.com/dowlori">GitHub</a>
     <a href="https://docs.google.com/document/d/1orNzCk47dXRHeUVod76fgCw0iGhVg8JY/edit?usp=sharing&ouid=112341925926667867885&rtpof=true&sd=true">Resume &#8595;</a>
   </div>
 </footer>
