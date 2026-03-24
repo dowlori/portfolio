@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case Studies — lowdow.</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=Syne:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#FFEDDF; --fg:#032B43; --accent:#D84727; --blue:#6D8EA0; --pale:#C6DCE7; --surface:#F5E0CC; --surface2:#EAD4BE; --muted:#4a6070; }
+  body.dark { --bg:#032B43; --fg:#FFEDDF; --surface:#07394f; --surface2:#0a4a62; --muted:#9ab4c2; }
+  *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+  html { scroll-behavior:smooth; }
+  body { background:var(--bg); color:var(--fg); font-family:'Syne',sans-serif; font-weight:400; overflow-x:hidden; cursor:none; transition:background 0.35s,color 0.35s; }
+  #cursor { width:12px; height:12px; background:var(--accent); border-radius:50%; position:fixed; pointer-events:none; z-index:9999; transform:translate(-50%,-50%); transition:width 0.18s,height 0.18s; }
+  #cursor-ring { width:36px; height:36px; border:1.5px solid rgba(216,71,39,0.4); border-radius:50%; position:fixed; pointer-events:none; z-index:9998; transform:translate(-50%,-50%); transition:width 0.18s,height 0.18s; }
+
+  nav { position:fixed; top:0; left:0; right:0; z-index:200; display:flex; justify-content:space-between; align-items:center; padding:1.4rem 3rem; border-bottom:1px solid var(--surface2); background:var(--bg); transition:background 0.35s; }
+  .nav-logo { font-family:'Bebas Neue',sans-serif; font-size:1.3rem; letter-spacing:0.12em; color:var(--fg); text-decoration:none; }
+  .nav-links { display:flex; gap:2.5rem; list-style:none; align-items:center; }
+  .nav-links a { font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.15em; color:var(--muted); text-decoration:none; transition:color 0.2s; }
+  .nav-links a:hover { color:var(--accent); }
+  .nav-links a.active { color:var(--accent); }
+  .nav-dropdown { position:relative; }
+  .nav-dropdown > a { display:flex; align-items:center; gap:0.4rem; }
+  .nav-dropdown > a::after { content:''; width:5px; height:5px; border-right:1.5px solid currentColor; border-bottom:1.5px solid currentColor; transform:rotate(45deg) translateY(-2px); transition:transform 0.2s; display:inline-block; }
+  .nav-dropdown:hover > a::after, .nav-dropdown:focus-within > a::after { transform:rotate(-135deg) translateY(-2px); }
+  .dropdown-menu { position:absolute; top:calc(100% + 1.2rem); left:50%; transform:translateX(-50%); background:var(--bg); border:1px solid var(--surface2); border-top:2px solid var(--accent); min-width:180px; opacity:0; visibility:hidden; pointer-events:none; transform:translateX(-50%) translateY(-6px); transition:opacity 0.2s ease,transform 0.2s ease,visibility 0.2s; }
+  .nav-dropdown:hover .dropdown-menu, .nav-dropdown:focus-within .dropdown-menu { opacity:1; visibility:visible; pointer-events:all; transform:translateX(-50%) translateY(0); }
+  .dropdown-menu a { display:block; padding:0.85rem 1.2rem; font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.15em; color:var(--muted); text-decoration:none; border-bottom:1px solid var(--surface2); transition:background 0.15s,color 0.15s; white-space:nowrap; }
+  .dropdown-menu a:last-child { border-bottom:none; }
+  .dropdown-menu a:hover, .dropdown-menu a.active { background:var(--surface); color:var(--accent); }
+  .dropdown-menu a .menu-arrow { float:right; opacity:0; transform:translateX(-4px); transition:opacity 0.15s,transform 0.15s; color:var(--accent); }
+  .dropdown-menu a:hover .menu-arrow { opacity:1; transform:translateX(0); }
+  .theme-toggle { background:none; border:1px solid var(--surface2); color:var(--muted); font-family:'Syne',sans-serif; font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; padding:0.4rem 0.9rem; border-radius:2px; cursor:none; transition:all 0.2s; }
+  .theme-toggle:hover { border-color:var(--accent); color:var(--accent); }
+
+  .back-link { display:inline-flex; align-items:center; gap:0.5rem; font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.15em; color:var(--muted); text-decoration:none; padding:1.5rem 3rem; border-bottom:1px solid var(--surface2); transition:color 0.2s; cursor:none; background:var(--surface); }
+  .back-link:hover { color:var(--accent); }
+  .back-link::before { content:'←'; }
+
+  .page-header { padding:12rem 3rem 5rem; border-bottom:1px solid var(--surface2); display:grid; grid-template-columns:1fr 1fr; gap:4rem; align-items:end; }
+  .breadcrumb { font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.2em; color:var(--muted); margin-bottom:1.5rem; display:flex; align-items:center; gap:0.75rem; }
+  .breadcrumb a { color:var(--muted); text-decoration:none; transition:color 0.2s; }
+  .breadcrumb a:hover { color:var(--accent); }
+  .breadcrumb span { color:var(--accent); }
+  .page-title { font-family:'Bebas Neue',sans-serif; font-size:clamp(3.5rem,8vw,7rem); line-height:0.9; color:var(--fg); }
+  .page-title em { font-family:'Instrument Serif',serif; font-style:italic; color:var(--accent); }
+  .page-desc { font-size:0.9rem; line-height:1.8; color:var(--muted); max-width:420px; align-self:end; }
+
+  .fade-up { opacity:0; transform:translateY(28px); transition:opacity 0.8s ease,transform 0.8s cubic-bezier(0.16,1,0.3,1); }
+  .fade-up.visible { opacity:1; transform:translateY(0); }
+
+  /* CASE STUDY CARDS — tall format with process emphasis */
+  .cases-section { padding: 4rem 3rem; }
+  .cases-list { display: flex; flex-direction: column; gap: 1.5px; background: var(--surface2); border: 1.5px solid var(--surface2); }
+
+  .case-card {
+    background: var(--bg); padding: 3rem;
+    text-decoration: none; color: var(--fg); display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 3rem; align-items: start;
+    cursor: none; border-left: 2px solid transparent;
+    transition: background 0.25s, border-left-color 0.25s;
+  }
+  .case-card:hover { background: var(--surface); border-left-color: var(--accent); }
+  .case-card:hover .case-arrow { opacity: 1; transform: translate(0,0); }
+
+  .case-number { font-family: 'Bebas Neue', sans-serif; font-size: 5rem; line-height: 1; color: var(--surface2); transition: color 0.25s; }
+  .case-card:hover .case-number { color: var(--pale); }
+
+  .case-tag { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--blue); margin-bottom: 0.6rem; }
+  .case-title { font-family: 'Instrument Serif', serif; font-size: 1.6rem; line-height: 1.2; margin-bottom: 0.75rem; color: var(--fg); }
+  .case-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.8; }
+
+  .case-metrics { display: flex; flex-direction: column; gap: 1.25rem; }
+  .metric { }
+  .metric-value { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; line-height: 1; color: var(--fg); }
+  .metric-value span { color: var(--accent); }
+  .metric-label { font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin-top: 0.1rem; }
+  .case-arrow { font-size: 1.2rem; color: var(--accent); opacity: 0; transform: translate(-4px,4px); transition: all 0.2s ease; justify-self: end; }
+
+  /* ADDIE/SAM process tag strip */
+  .process-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 1rem; }
+  .process-tag { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; padding: 0.2rem 0.6rem; border: 1px solid var(--surface2); color: var(--muted); border-radius: 2px; }
+
+  /* Empty placeholder */
+  .case-card.empty {
+    grid-template-columns: 1fr;
+    min-height: 160px;
+    background: var(--surface);
+    border: 1.5px dashed var(--surface2);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 0.5rem; border-left: 2px solid transparent;
+  }
+  .empty-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; color: var(--muted); }
+
+  /* TEMPLATE COMMENT GUIDE */
+  .template-guide {
+    margin: 3rem 3rem 0;
+    padding: 1.5rem 2rem;
+    border: 1px solid var(--surface2);
+    border-left: 3px solid var(--blue);
+    background: var(--surface);
+    display: grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: start;
+  }
+  .note-icon { font-size: 1rem; color: var(--blue); }
+  .note-title { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--blue); margin-bottom: 0.4rem; }
+  .note-text { font-size: 0.82rem; color: var(--muted); line-height: 1.7; }
+
+  footer { padding:2rem 3rem; display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--surface2); margin-top:5rem; }
+  footer p { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); }
+  .footer-links { display:flex; gap:2rem; }
+  .footer-links a { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); text-decoration:none; cursor:none; transition:color 0.2s; }
+  .footer-links a:hover { color:var(--accent); }
+
+  @media (max-width: 768px) {
+    nav { padding:1.2rem 1.5rem; }
+    .nav-links { display:none; }
+    .page-header { grid-template-columns:1fr; padding:10rem 1.5rem 4rem; gap:2rem; }
+    .cases-section { padding:3rem 1.5rem; }
+    .case-card { grid-template-columns:1fr; gap:1.5rem; }
+    .case-number { font-size:3rem; }
+    .template-guide { margin:2rem 1.5rem 0; }
+    footer { flex-direction:column; gap:1rem; text-align:center; }
+  }
+</style>
+</head>
+<body>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<nav>
+  <a href="/" class="nav-logo">lowdow.</a>
+  <ul class="nav-links">
+    <li><a href="/#about">About</a></li>
+    <li class="nav-dropdown">
+      <a href="/#projects" class="active">Portfolio</a>
+      <div class="dropdown-menu">
+        <a href="/projects/learning-design/">Learning Design <span class="menu-arrow">↗</span></a>
+        <a href="/projects/case-studies/" class="active">Case Studies <span class="menu-arrow">↗</span></a>
+        <a href="/projects/graphic-design/">Graphic Design <span class="menu-arrow">↗</span></a>
+      </div>
+    </li>
+    <li><a href="/#experience">Experience</a></li>
+    <li><a href="/#contact">Contact</a></li>
+  </ul>
+  <button class="theme-toggle" onclick="toggleTheme()">Dark</button>
+</nav>
+
+<a href="/" class="back-link">Back to Portfolio</a>
+
+<div class="page-header">
+  <div>
+    <div class="breadcrumb">
+      <a href="/">Home</a> / <a href="/#projects">Portfolio</a> / <span>Case Studies</span>
+    </div>
+    <h1 class="page-title">Case<br><em>Studies</em></h1>
+  </div>
+  <p class="page-desc">Process documentation, outcome data, and design rationale behind selected projects. Each case study covers the problem, approach, and measurable results.</p>
+</div>
+
+<div class="template-guide fade-up">
+  <div class="note-icon">ℹ</div>
+  <div>
+    <div class="note-title">Adding Your Case Studies</div>
+    <p class="note-text">
+      Each case study card links to a dedicated page. Create a folder at
+      <code style="background:var(--surface2);padding:0.1rem 0.4rem;border-radius:2px;font-size:0.8em;">projects/case-studies/your-project-name/</code>
+      with an <code style="background:var(--surface2);padding:0.1rem 0.4rem;border-radius:2px;font-size:0.8em;">index.html</code> inside it for the full write-up.
+      Then duplicate one of the card templates below, fill in your metrics, and delete the placeholder cards.
+    </p>
+  </div>
+</div>
+
+<div class="cases-section">
+  <div class="cases-list">
+
+    <!-- TEMPLATE: Copy this block for each case study
+    <a href="/projects/case-studies/your-project/" class="case-card fade-up" style="transition-delay:0.0s">
+      <div class="case-number">01</div>
+      <div>
+        <div class="case-tag">Compliance Training</div>
+        <div class="case-title">Project Title Here</div>
+        <p class="case-desc">One or two sentences describing the problem you were hired to solve and the population of learners involved.</p>
+        <div class="process-tags">
+          <span class="process-tag">ADDIE</span>
+          <span class="process-tag">Needs Analysis</span>
+          <span class="process-tag">Storyline 360</span>
+          <span class="process-tag">Kirkpatrick L3</span>
+        </div>
+      </div>
+      <div class="case-metrics">
+        <div class="metric">
+          <div class="metric-value">22<span>%</span></div>
+          <div class="metric-label">Assessment score increase</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value">30<span>%</span></div>
+          <div class="metric-label">Reduction in seat time</div>
+        </div>
+      </div>
+      <span class="case-arrow">↗</span>
+    </a>
+    -->
+
+    <div class="case-card empty fade-up">
+      <span class="empty-label">Your case study goes here</span>
+      <span style="font-size:0.6rem;color:var(--muted);opacity:0.6;text-transform:uppercase;letter-spacing:0.1em;">See note above to add</span>
+    </div>
+    <div class="case-card empty fade-up" style="transition-delay:0.08s">
+      <span class="empty-label">Your case study goes here</span>
+      <span style="font-size:0.6rem;color:var(--muted);opacity:0.6;text-transform:uppercase;letter-spacing:0.1em;">See note above to add</span>
+    </div>
+    <div class="case-card empty fade-up" style="transition-delay:0.16s">
+      <span class="empty-label">Your case study goes here</span>
+      <span style="font-size:0.6rem;color:var(--muted);opacity:0.6;text-transform:uppercase;letter-spacing:0.1em;">See note above to add</span>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <p>&#169; 2026 lowdow. &#8212; Instructional Designer</p>
+  <div class="footer-links">
+    <a href="#">LinkedIn</a>
+    <a href="#">GitHub</a>
+    <a href="#">Resume &#8595;</a>
+  </div>
+</footer>
+
+<script>
+  const cur=document.getElementById('cursor'),ring=document.getElementById('cursor-ring');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+  (function animRing(){rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing);})();
+  document.querySelectorAll('a,button').forEach(function(el){
+    el.addEventListener('mouseenter',function(){cur.style.width='20px';cur.style.height='20px';ring.style.width='54px';ring.style.height='54px';});
+    el.addEventListener('mouseleave',function(){cur.style.width='12px';cur.style.height='12px';ring.style.width='36px';ring.style.height='36px';});
+  });
+  function toggleTheme(){document.body.classList.toggle('dark');document.querySelector('.theme-toggle').textContent=document.body.classList.contains('dark')?'Light':'Dark';}
+  var io=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.1});
+  document.querySelectorAll('.fade-up').forEach(function(el){io.observe(el);});
+</script>
+</body>
+</html>
